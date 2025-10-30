@@ -1,5 +1,7 @@
-[webservers]
+[web]
 192.168.63.121 apache_package=apache2 php_package=libapache2-mod-php
+[app]
 192.168.63.122 apache_package=apache2 php_package=libapache2-mod-php
-192.168.63.123 apache_package=apache2 php_package=libapache2-mod-php
-#centOS.example apache_package=httpd php_package=php
+[db]
+192.168.63.123 apache_package=apache2 php_package=libapache2-mod-php db_package=mariadb-server
+#centOS.example apache_package=httpd php_package=php db_package=mariadb

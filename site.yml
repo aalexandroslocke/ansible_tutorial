@@ -1,0 +1,49 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: Install Update - Ubuntu
+    apt:
+      update_cache: yes
+      upgrade: dist
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web
+  become: true
+  tasks:
+
+  - name: Install Update - CentOS
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install apache and php packages
+    package:
+      name:
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
+      state: latest
+      update_cache: yes
+
+- hosts: db
+  become: true
+  tasks:
+
+  - name: Install MariaDB
+    package:
+      name:
+        - "{{ db_package }}"
+      state: latest
+
+- hosts: db
+  become: true
+  tasks:
+
+  - name: Install MariaDB
+    package:
+      name:
+        - samba
+      state: latest
