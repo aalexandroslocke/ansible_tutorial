@@ -1,6 +1,6 @@
 [web]
 192.168.63.121 apache_package=apache2 php_package=libapache2-mod-php
-[app]
+[file]
 192.168.63.122 apache_package=apache2 php_package=libapache2-mod-php
 [db]
 192.168.63.123 apache_package=apache2 php_package=libapache2-mod-php db_package=mariadb-server

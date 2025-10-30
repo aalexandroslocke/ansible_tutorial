@@ -5,22 +5,25 @@
   pre_tasks:
 
   - name: Install Update - Ubuntu
+    tags: always
     apt:
       update_cache: yes
       upgrade: dist
     when: ansible_distribution == "Ubuntu"
 
-- hosts: web
-  become: true
-  tasks:
-
   - name: Install Update - CentOS
+    tags: always
     dnf:
       update_only: yes
       update_cache: yes
     when: ansible_distribution == "CentOS"
 
+- hosts: web
+  become: true
+  tasks:
+
   - name: install apache and php packages
+    tags: apache, apche2, httpd, web
     package:
       name:
         - "{{ apache_package }}"
@@ -33,16 +36,18 @@
   tasks:
 
   - name: Install MariaDB
+    tags: mariadb, db
     package:
       name:
         - "{{ db_package }}"
       state: latest
 
-- hosts: db
+- hosts: file
   become: true
   tasks:
 
-  - name: Install MariaDB
+  - name: Install Samba
+    tags: samba, file
     package:
       name:
         - samba
