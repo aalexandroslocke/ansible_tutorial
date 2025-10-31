@@ -18,6 +18,38 @@
       update_cache: yes
     when: ansible_distribution == "CentOS"
 
+### Localhost
+- hosts: localhost
+  become: true
+  vars:
+    git_repo: git@github.com:aalexandroslocke/PortfolioWebsite.git
+  tasks:
+
+  - name: Create a new directory
+    file:
+      path: /var/site/temp
+      state: directory
+      owner: root
+      group: root
+      mode: '0755'
+
+  - name: Get portfolio from git
+    tags: local, git
+    git:
+      repo: "{{ git_repo }}"
+      dest: /var/site/temp
+      version: main
+      update: yes
+      force: yes
+    become: yes
+
+  - name: Create a tar.gz archive of a directory
+    archive:
+      path: /var/site/temp
+      dest: /var/site/portoflio_{{ ansible_date_time.date }}.tar.gz
+      format: gz
+
+### Web Server
 - hosts: web
   become: true
   tasks:
@@ -31,6 +63,32 @@
       state: latest
       update_cache: yes
 
+  - name: Create a new directory
+    file:
+      path: /var/temp/
+      state: directory
+      owner: root
+      group: root
+      mode: '0755'
+
+  - name: Copy configuration file
+    copy:
+      src: /var/site/portoflio_{{ ansible_date_time.date }}.tar.gz
+      dest: /var/temp/portoflio_{{ ansible_date_time.date }}.tar.gz
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Extract a tar.gz archive
+    unarchive:
+      src: /var/temp/portoflio_{{ ansible_date_time.date }}.tar.gz
+      dest: /var/www/html
+      remote_src: yes
+      keep_newer: yes
+      strip_components: 1
+
+
+### DB Server
 - hosts: db
   become: true
   tasks:
@@ -42,6 +100,7 @@
         - "{{ db_package }}"
       state: latest
 
+### File Server
 - hosts: file
   become: true
   tasks:
