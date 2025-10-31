@@ -63,30 +63,31 @@
       state: latest
       update_cache: yes
 
+  - name: Extract a tar.gz archive
+    unarchive:
+      src: /var//site/portoflio_{{ ansible_date_time.date }}.tar.gz
+      dest: /var/www/
+      exclude:
+        - ./.git
+
   - name: Create a new directory
     file:
-      path: /var/temp/
+      path: /var/www/sites/
       state: directory
       owner: root
       group: root
       mode: '0755'
 
-  - name: Copy configuration file
-    copy:
-      src: /var/site/portoflio_{{ ansible_date_time.date }}.tar.gz
-      dest: /var/temp/portoflio_{{ ansible_date_time.date }}.tar.gz
+  - name: Create a new directory
+    file:
+      path: /var/www/sites/{{ ansible_date_time.date }}
+      state: directory
       owner: root
       group: root
-      mode: '0644'
+      mode: '0755'
 
-  - name: Extract a tar.gz archive
-    unarchive:
-      src: /var/temp/portoflio_{{ ansible_date_time.date }}.tar.gz
-      dest: /var/www/html
-      remote_src: yes
-      keep_newer: yes
-      strip_components: 1
-
+  - name: rsync Files
+    shell: rsync -a /var/www/temp/ /var/www/html/
 
 ### DB Server
 - hosts: db
